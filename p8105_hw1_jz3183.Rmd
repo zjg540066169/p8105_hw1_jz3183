@@ -5,26 +5,114 @@ date: "9/18/2019"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library("tidyverse")
+set.seed(1)
 ```
 
-## R Markdown
+# Homework 1 for Data Science Course p8105
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+This is an R Markdown document for homework 1 in course p8105. The author is Jungang Zou whose UNI is jz3183.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## Problem 1
 
-```{r cars}
-summary(cars)
+```{r df_p1_create, collapse = TRUE}
+df_p1 <- tibble(
+  random_sample = rnorm(8),
+  logical_vector = random_sample > 0,
+  character_vector = c("a","b","c","d","e","f","g","h"),
+  factor_vector = factor(c("class_1","class_3","class_2","class_1","class_2","class_3","class_1","class_2"), 
+                         levels = c("class_1","class_2","class_3"))
+)
+
+df_p1
 ```
 
-## Including Plots
+Calculate the mean of each variable in dataframe df_p1. The results are as follows:
 
-You can also embed plots, for example:
+* The mean of random_sample is `r mean(pull(df_p1, random_sample))`. 
+* The mean of logical_vector is `r mean(pull(df_p1, logical_vector))`. 
+* The mean of character_vector is `r mean(pull(df_p1, character_vector))`. 
+* The mean of factor_vector is `r mean(pull(df_p1, factor_vector))`. 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+The reason why the mean of character_vector and factor_vector is NA, is that the function of mean can not be applied to the data whose type is character vector or factor vector.
+
+
+The next code chunk is to test the as.number() function and some explanation will be used to explain the results.
+
+```{r as_numeric_function, eval = FALSE}
+as.numeric(pull(df_p1, random_sample))
+as.numeric(pull(df_p1, logical_vector))
+as.numeric(pull(df_p1, character_vector))
+as.numeric(pull(df_p1, factor_vector))
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Actually, the function as.number is used to convert other data type to double float number. 
+
+* For numeric data, it keeps the same data type.
+* For logical data, it converts TRUE to 1, and FALSE to 0. 
+* For character data, it doesn`t work.
+* For factor data, it converts the factor to number referring to factor levels. This process makes the factor data meaningless.
+
+Since the function of mean() whose parameter only can be numeric or logical, so it can not be applied to other type of data.
+
+
+The next code chunk is to test different convertion among logical vector and different data types.
+
+```{r as_numeric_function_multiplication, collapse = TRUE, warning = FALSE}
+as.numeric(pull(df_p1, logical_vector)) * pull(df_p1, random_sample)
+as.factor(pull(df_p1, logical_vector)) * pull(df_p1, random_sample) 
+as.numeric(as.factor(pull(df_p1, logical_vector))) * pull(df_p1, random_sample)
+```
+
+As we can see, multiplication is not meaningful for factor.
+
+
+## Problem 2
+
+```{r setup_2, include = FALSE} 
+# To clean up the memories and variables to avoid some problems.
+rm(list = ls())
+knitr::opts_chunk$set(echo = TRUE)
+library("tidyverse")
+set.seed(1)
+```
+
+
+```{r df_p2_create, collapse = TRUE}
+df_p2 <- tibble(
+  x = rnorm(500),
+  y = rnorm(500),
+  logical_vector = (x + y) > 1,
+  numeric_vector = as.numeric(logical_vector),
+  factor_vector = as.factor(logical_vector)
+)
+
+df_p2
+```
+
+There is a short description for these vectors:
+
+* the size of the dataset is `r nrow(df_p2)` * `r ncol(df_p2)`.
+* the mean of x is `r mean(pull(df_p2,x))`, median of x is `r median(pull(df_p2,x))`, and standard deviation of x is `r sd(pull(df_p2,x))`.
+* the proportion of cases for which x + y > 1 is `r sum(pull(df_p2, logical_vector)) / length(pull(df_p2, logical_vector))`.
+
+
+The next code chunk is used to plot some graphs by ggplot
+
+```{r df_p2_plot}
+first_graph <- ggplot(df_p2, aes(x = x, y = y, color = logical_vector)) + geom_point() + labs(title = "Scatterplot of y vs x group by logical vector", x = "x", y = "y") + theme(plot.title = element_text(hjust = 0.5))
+first_graph
+
+second_graph <- ggplot(df_p2, aes(x = x, y = y, color = numeric_vector)) + geom_point() + labs(title = "Scatterplot of y vs x group by numeric vector", x = "x", y = "y") + theme(plot.title = element_text(hjust = 0.5))
+second_graph
+
+third_graph <- ggplot(df_p2, aes(x = x, y = y, color = factor_vector)) + geom_point() + labs(title = "Scatterplot of y vs x group by factor vector", x = "x", y = "y") + theme(plot.title = element_text(hjust = 0.5))
+third_graph
+```
+
+Finally, we saved the first scatterplot by running 
+```{r save_scatterplot, message = FALSE}
+ggsave("first_scatterplot.png", first_graph)
+```
