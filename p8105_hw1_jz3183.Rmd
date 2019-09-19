@@ -64,7 +64,9 @@ The next code chunk is to test different convertion among logical vector and dif
 
 ```{r as_numeric_function_multiplication, collapse = TRUE, warning = FALSE}
 as.numeric(pull(df_p1, logical_vector)) * pull(df_p1, random_sample)            # convert numeric to numeric and multiplication
+
 as.factor(pull(df_p1, logical_vector)) * pull(df_p1, random_sample)             # convert logical to numeric and multiplication
+
 as.numeric(as.factor(pull(df_p1, logical_vector))) * pull(df_p1, random_sample) # convert factor to numeric and multiplication
 ```
 
@@ -78,7 +80,7 @@ As we can see, multiplication is not meaningful for factor.
 rm(list = ls())
 knitr::opts_chunk$set(echo = TRUE)
 library("tidyverse")
-set.seed(1)
+set.seed(2)
 ```
 
 
@@ -98,14 +100,14 @@ df_p2
 
 There is a short description for these vectors:
 
-* the size of the dataset is `r nrow(df_p2)` * `r ncol(df_p2)`.
+* the size of the dataset is (`r nrow(df_p2)`, `r ncol(df_p2)`).
 * the mean of x is `r mean(pull(df_p2,x))`, median of x is `r median(pull(df_p2,x))`, and standard deviation of x is `r sd(pull(df_p2,x))`.
 * the proportion of cases for which x + y > 1 is `r sum(pull(df_p2, logical_vector)) / length(pull(df_p2, logical_vector))`.
 
 
 The next code chunk is used to plot some graphs by ggplot
 
-```{r df_p2_plot}
+```{r df_p2_plot, collapse = TRUE}
 # scatterplot of y vs x group by logical vector
 first_graph <- ggplot(df_p2, aes(x = x, y = y, color = logical_vector)) + geom_point() + labs(title = "Scatterplot of y vs x group by logical vector", x = "x", y = "y") + theme(plot.title = element_text(hjust = 0.5))
 first_graph
@@ -118,6 +120,7 @@ second_graph
 third_graph <- ggplot(df_p2, aes(x = x, y = y, color = factor_vector)) + geom_point() + labs(title = "Scatterplot of y vs x group by factor vector", x = "x", y = "y") + theme(plot.title = element_text(hjust = 0.5))
 third_graph
 ```
+
 
 Finally, we saved the first scatterplot by running 
 ```{r save_scatterplot, message = FALSE}
