@@ -43,7 +43,7 @@ The reason why the mean of character_vector and factor_vector is NA, is that the
 
 The next code chunk is to test the as.number() function and some explanation will be used to explain the results.
 
-```{r as_numeric_function, eval = FALSE}
+```{r as_numeric_function, results = 'hide', collapse = TRUE}
 as.numeric(pull(df_p1, random_sample))    # convert numeric to numeric
 as.numeric(pull(df_p1, logical_vector))   # convert logical to numeric
 as.numeric(pull(df_p1, character_vector)) # convert character to numeric
@@ -120,6 +120,10 @@ second_graph
 third_graph <- ggplot(df_p2, aes(x = x, y = y, color = factor_vector)) + geom_point() + labs(title = "Scatterplot of y vs x group by factor vector", x = "x", y = "y") + theme(plot.title = element_text(hjust = 0.5))
 third_graph
 ```
+
+As we know, since x and y are all from stardard normal distribution, so the mean of x is 0 and the mean of y is 0. From this, the mean of x + y is also 0, so the number of x + y <= 1 is greater than x + y > 1. This is the reason why the number of FALSE point is greater than the number of TRUE points in the first scatterplot.
+
+As for the second and third scatterplots, the same reasons hold. So in the second scatterplot, the number of 0 point is greater than the number of 1 point. And in the third scatterplot, the number of FALSE Factor point is greater than the number of TRUE Factor point.
 
 
 Finally, we saved the first scatterplot by running 
